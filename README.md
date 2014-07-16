@@ -22,3 +22,10 @@ A runtime sandbox for Android apps based on strace. http://mxia.me/appbox
 * Run it in adb shell, its commandline is the same as `strace`. 
 * At runtime, you will see both terminal output (vanilla `strace` outputs) and logcat output (our patch).
 * GDB debugging is possible, but might be nasty cuz the sandbox itself is stracing some other process. It might worth having a try later. 
+
+## Modification tips
+
+* The code is still under active development and lots of files are copied over from an old project, making it a bit messy.
+* In general, `jni/*` is mostly the direct clone of `platform_external_strace` from Google. A few files are altered to allow NDK standalone build. And a few other files are changed for the purpose of hooking into appbox code.
+* The top-level make file `jni/Android.mk` is mostly from the original clone and a few line to statically link appbox code.
+* Appbox code is built with its own CFLAGS (in separate from strace) into a static library, and then linked by strace. Essentially, appbox code should not depend on any headers other than those in `jni/appbox/`. This can help avoid lots of platform-specific and differnet-version-header definition headache. Appbox exports its interfaces in sandbox.h, which is included by strace.
